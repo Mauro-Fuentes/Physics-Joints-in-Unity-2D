@@ -33,19 +33,24 @@ using UnityEngine.InputSystem;
 
 public class CattoController : MonoBehaviour
 {
-    public float xMove;
-    public float yMove;
+
     public float cattoJumpForce;
     public float cattoSpeed;
 
-    public Rigidbody2D cattoRigidbody2D;
-
+    private Rigidbody2D cattoRigidbody2D;
     private GroundChecker groundChecker;
+    private Vector2 vectorMovement;
+    private bool cattoIsFacingRight = true;
 
     public void Start()
     {
         cattoRigidbody2D = GetComponent<Rigidbody2D>();
         groundChecker = GetComponentInChildren<GroundChecker>();
+    }
+
+    public void FixedUpdate()
+    {
+        PlayerMovement(vectorMovement);   
     }
 
     private void OnFire()
@@ -55,6 +60,8 @@ public class CattoController : MonoBehaviour
 
     private void OnJump()
     {
+        Debug.Log("Jump");
+
         if (groundChecker.IsCattoGrounded())
         {
             cattoRigidbody2D.AddForce(new Vector2(0f, cattoJumpForce));
@@ -63,14 +70,38 @@ public class CattoController : MonoBehaviour
 
     private void OnMove(InputValue input)
     {
-        PlayerMovement(input.Get<Vector2>());
+        vectorMovement = input.Get<Vector2>();
+
+        FlipCatto(vectorMovement);
     }
 
     private void PlayerMovement(Vector2 movement)
     {
-        cattoRigidbody2D.velocity = new Vector2 (movement.x * cattoSpeed, 0);
-
-        //cattoRigidbody2D.velocity = new Vector2(moveInput * cattoSpeed, cattoRigidbody2D.velocity.y);
+        cattoRigidbody2D.velocity = new Vector2(movement.x * cattoSpeed, cattoRigidbody2D.velocity.y) * Time.deltaTime;
     }
 
+    private bool IsCattoFacingRight()
+    {
+        return cattoIsFacingRight;
+    }
+
+    private void FlipCatto(Vector2 movement)
+    {
+        if(movement.x > 0.1f)
+        {
+            Debug.Log("Turn right");
+        }
+
+        else
+        {
+            Debug.Log("Turn left");
+        }
+
+        Vector3 cattoScale = transform.localScale;
+        cattoScale.x *= -1;
+
+        transform.localScale = cattoScale;
+
+        cattoIsFacingRight = !cattoIsFacingRight;
+    }
 }

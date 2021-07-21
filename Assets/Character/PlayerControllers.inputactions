@@ -1,5 +1,5 @@
 {
-    "name": "Player",
+    "name": "PlayerControllers",
     "maps": [
         {
             "name": "Player",
@@ -7,7 +7,7 @@
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "89637b6c-86b4-47af-8932-82295631b6aa",
                     "expectedControlType": "Vector2",
                     "processors": "",

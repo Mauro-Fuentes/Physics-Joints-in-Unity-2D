@@ -9995,10 +9995,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269ba9d1008b5a741bae984c24f48957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xMove: 0
-  yMove: 0
-  cattoJumpForce: 150
-  cattoSpeed: 2
+  vectorMovement: {x: 0, y: 0}
+  cattoJumpForce: 1500
+  cattoSpeed: 50
   cattoRigidbody2D: {fileID: 0}
 --- !u!50 &1876707084
 Rigidbody2D:
