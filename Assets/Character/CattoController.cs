@@ -33,35 +33,37 @@ using UnityEngine.InputSystem;
 
 public class CattoController : MonoBehaviour
 {
-
     public float cattoJumpForce;
     public float cattoSpeed;
 
     private Rigidbody2D cattoRigidbody2D;
     private GroundChecker groundChecker;
-    private Vector2 vectorMovement;
-    private bool cattoIsFacingRight = true;
+    private SpriteRenderer cattoSpriteRenderer;
+
+    public Vector2 vectorMovement;
+
+    public bool cattoIsFacingRight = true; // by default Catto faces right
 
     public void Start()
     {
         cattoRigidbody2D = GetComponent<Rigidbody2D>();
         groundChecker = GetComponentInChildren<GroundChecker>();
+        cattoSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
     }
 
     public void FixedUpdate()
     {
-        PlayerMovement(vectorMovement);   
+        PlayerMovement(vectorMovement);  
     }
 
-    private void OnFire()
+    private void PlayerMovement(Vector2 movement)
     {
-        Debug.Log("OnFire");
+        cattoRigidbody2D.velocity = new Vector2(movement.x * cattoSpeed, cattoRigidbody2D.velocity.y); // * Time.deltaTime
     }
 
     private void OnJump()
     {
-        Debug.Log("Jump");
-
         if (groundChecker.IsCattoGrounded())
         {
             cattoRigidbody2D.AddForce(new Vector2(0f, cattoJumpForce));
@@ -72,36 +74,48 @@ public class CattoController : MonoBehaviour
     {
         vectorMovement = input.Get<Vector2>();
 
-        FlipCatto(vectorMovement);
+        SetCattoDirection(vectorMovement.x);
+
+        ShouldCattoBeFlipped(vectorMovement);
     }
 
-    private void PlayerMovement(Vector2 movement)
+    private void SetCattoDirection(float movement)
     {
-        cattoRigidbody2D.velocity = new Vector2(movement.x * cattoSpeed, cattoRigidbody2D.velocity.y) * Time.deltaTime;
-    }
-
-    private bool IsCattoFacingRight()
-    {
-        return cattoIsFacingRight;
-    }
-
-    private void FlipCatto(Vector2 movement)
-    {
-        if(movement.x > 0.1f)
+        if(movement > 0.01f)
         {
-            Debug.Log("Turn right");
+            cattoIsFacingRight = true;
+
+        }
+        if(movement < 0.01f)
+        {
+            cattoIsFacingRight = false;
+        }
+    }
+
+    private void ShouldCattoBeFlipped(Vector2 movement)
+    {
+        // if input is 0 return;
+
+        // if catoo is facing a different direction from that of the input... yes
+        if (movement.x > 0f && !cattoIsFacingRight)
+        {
+            FlipCatto();
         }
 
-        else
+        if(movement.x < 0f && cattoIsFacingRight)
         {
-            Debug.Log("Turn left");
+            FlipCatto();
         }
+    }
 
-        Vector3 cattoScale = transform.localScale;
-        cattoScale.x *= -1;
-
-        transform.localScale = cattoScale;
-
+    private void FlipCatto() // Vector2 movement
+    {
         cattoIsFacingRight = !cattoIsFacingRight;
+
+        //Vector3 cattoScale = transform.localScale;
+        //cattoScale.x *= -1;
+        //transform.localScale = cattoScale;
+
+        cattoSpriteRenderer.flipX = true;
     }
 }
