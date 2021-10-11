@@ -37,13 +37,12 @@ public class CattoController : MonoBehaviour
     public float cattoSpeed;
 
     private Rigidbody2D cattoRigidbody2D;
-    
+    private Animator cattoAnimator;  
     private GroundChecker groundChecker;
-    
     private SpriteRenderer cattoSpriteRenderer;
-
+   
     private Vector2 vectorMovement;
-
+    
     private bool cattoIsFacingRight = true; // by default Catto faces right
 
     public void Start()
@@ -51,6 +50,7 @@ public class CattoController : MonoBehaviour
         cattoRigidbody2D = GetComponent<Rigidbody2D>();
         groundChecker = GetComponentInChildren<GroundChecker>();
         cattoSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        cattoAnimator = GetComponent<Animator>();
     }
 
     public void FixedUpdate()
@@ -74,12 +74,12 @@ public class CattoController : MonoBehaviour
 
     private void OnMove(InputValue input)
     {
+        cattoAnimator.SetTrigger("Run");
+
         vectorMovement = input.Get<Vector2>();
         if(groundChecker.IsCattoGrounded())
         {
-            
-
-
+ 
         }
 
         ShouldCattoBeFlipped(vectorMovement);
@@ -102,7 +102,12 @@ public class CattoController : MonoBehaviour
 
     private void ShouldCattoBeFlipped(Vector2 movement)
     {
-        // if input is 0 return;
+        if (movement.x == 0f)
+        {
+            cattoAnimator.SetTrigger("Idle");
+            return;
+        }
+
 
         // if catoo is facing a different direction from that of the input... yes
         if (movement.x > 0f && !cattoIsFacingRight)
